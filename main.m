@@ -1,5 +1,5 @@
 addpath ./lib
-addpath ./TP1
+addpath ./Geometrical_Transformations_3D
 
 R = 2;
 

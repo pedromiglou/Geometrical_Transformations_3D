@@ -14,8 +14,9 @@ classdef Triangle
     end
     
     methods
-        function obj = Triangle(size, X, Y, Z, Phi, Th, Psi)
+        function obj = Triangle(size,X, Y, Z, Phi, Th, Psi)
             % Construct an instance of this class
+            size = sqrt(3*sqrt(3)/2)*size;
             obj.X = size*X;
             obj.Y = size*Y;
             obj.Z = size*Z;
@@ -25,10 +26,10 @@ classdef Triangle
             obj.size = size;
 
             obj.Points = [
-                -size -size  0  0
-                 0 -size -size  0
-                 0  0  0  0
-                 1  1  1  1
+                -size -size/2   0
+                 0 -sqrt(3)/2*size   0
+                 0  0    0
+                 1  1    1
                 ];
 
             obj.Points = trans(obj.X, obj.Y, obj.Z)*rotx(obj.Phi)*roty(obj.Th)*rotz(obj.Psi)*obj.Points;

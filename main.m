@@ -16,6 +16,6 @@ zlabel('Z')
 
 hold on
 
-s = Tetrahedron(R );
+s = Octahedron(R );
 s = s.close();
 s = s.translate(2,2,0);

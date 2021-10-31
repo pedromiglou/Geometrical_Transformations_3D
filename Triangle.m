@@ -1,60 +1,81 @@
 classdef Triangle
-    %UNTITLED Summary of this class goes here
+    % Class to represent the Triangle figure
     
     properties
         Points
-        X
-        Y
-        Z
-        Phi
-        Th
-        Psi
         h
         size
     end
     
     methods
-        function obj = Triangle(size,X, Y, Z, Phi, Th, Psi)
+        function obj = Triangle(size, V1, V2, V3, color)
             % Construct an instance of this class
-            size = sqrt(3*sqrt(3)/2)*size;
-            obj.X = size*X;
-            obj.Y = size*Y;
-            obj.Z = size*Z;
-            obj.Phi = Phi;
-            obj.Th = Th;
-            obj.Psi = Psi;
-            obj.size = size;
+            obj.size = sqrt(3*sqrt(3)/2)*size;
 
-            obj.Points = [
-                -size -size/2   0
-                 0 -sqrt(3)/2*size   0
-                 0  0    0
-                 1  1    1
-                ];
+            obj.Points = [V1 V2 V3] .* obj.size;
 
-            obj.Points = trans(obj.X, obj.Y, obj.Z)*rotx(obj.Phi)*roty(obj.Th)*rotz(obj.Psi)*obj.Points;
+            obj.Points = [obj.Points; ones(1, 3)];
             
-            obj.h = fill3( obj.Points(1, :), obj.Points(2,:), obj.Points(3,:), 'm');
+            obj.h = fill3( obj.Points(1, :), obj.Points(2,:), obj.Points(3,:), color);
         end
         
-        function obj = move(obj, path)
-            % Move square
-            %{
-            N = 100;
-            A1 = [
-                -2 -2  0  0
-                 0 -2 -2  0
-                 0  0  0  0
-                 1  1  1  1
+        function obj = translate(obj, X, Y, Z)
+            % Translation movement
+            T = [ 1 0 0 X
+                  0 1 0 Y
+                  0 0 1 Z
+                  0 0 0 1
                 ];
-
-            obj.Points = Animate(obj.h,A1,obj.Points,path,N);
-            %}
-            obj.Points = trans(path(1)*obj.size, path(2)*obj.size, path(3)*obj.size)*rotx(path(4))*roty(path(5))*rotz(path(6))*obj.Points;
-            
+            obj.Points = T*obj.Points;
+                
             obj.h.XData = obj.Points(1,:);
             obj.h.YData = obj.Points(2,:);
             obj.h.ZData = obj.Points(3,:);
+        end
+
+        function [obj, dependentFaces] = rotate(obj, othersPoints, angle, dependentFaces)
+            % Rotation movement
+            %othersPoints
+            %obj.Points
+            %commonPoints = intersect(othersPoints', obj.Points', 'rows')'
+            commonPoints = [];
+            i = 1;
+            while i<=3
+                j=1;
+                while j<=3
+                    if and(abs(othersPoints(1, i) - obj.Points(1, j))<0.001, abs(othersPoints(2, i) - obj.Points(2, j))<0.001)
+                        commonPoints = [commonPoints othersPoints(:, i)];
+                        break;
+                    end
+                    j = j+1;
+                end
+                i = i+1;
+            end
+            axis = commonPoints(:,1) - commonPoints(:,2);
+            axis = axis/sqrt(sum(axis.^2));
+
+            R = [
+                cos(angle) + axis(1).^2*(1-cos(angle))    axis(1)*axis(2)*(1-cos(angle)) - axis(3) * sin(angle)    axis(1)*axis(3)*(1-cos(angle))+axis(2)*sin(angle) 0
+                axis(2)*axis(1)*(1-cos(angle))+axis(3)*sin(angle)    cos(angle)+axis(2).^2*(1-cos(angle))    axis(2)*axis(3)*(1-cos(angle))-axis(1)*sin(angle) 0
+                axis(3)*axis(1)*(1-cos(angle))-axis(2)*sin(angle)    axis(3)*axis(2)*(1-cos(angle))+axis(1)*sin(angle)    cos(angle) + axis(3).^2*(1-cos(angle)) 0
+                0 0 0 1
+            ];
+
+            obj = obj.translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
+            obj.Points = R*obj.Points;
+            obj = obj.translate( commonPoints(1,1),  commonPoints(2,1),  commonPoints(3,1));
+
+            obj.h.XData = obj.Points(1,:);
+            obj.h.YData = obj.Points(2,:);
+            obj.h.ZData = obj.Points(3,:);
+
+            i = 1;
+            while i<=length(dependentFaces)
+                dependentFaces(i) = dependentFaces(i).translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
+                dependentFaces(i).Points = R*dependentFaces(i).Points;
+                dependentFaces(i) = dependentFaces(i).translate(commonPoints(1,1), commonPoints(2,1), commonPoints(3,1));
+                i = i+1;
+            end
         end
     end
 end

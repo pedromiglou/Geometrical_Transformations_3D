@@ -1,6 +1,6 @@
 addpath ./Geometrical_Transformations_3D
 
-R = 2;
+R = 3;
 
 close
 
@@ -16,6 +16,6 @@ zlabel('Z')
 
 hold on
 
-s = Cube(R );
+s = Tetrahedron(R );
 s = s.close();
 s = s.translate(2,2,0);

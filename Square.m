@@ -10,9 +10,9 @@ classdef Square
     methods
         function obj = Square(size, V1, V2, V3, V4, color)
             % Construct an instance of this class
-            size = sqrt(2)*size;
+            obj.size = sqrt(2)*size;
 
-            obj.Points = [V1 V2 V3 V4] .* size;
+            obj.Points = [V1 V2 V3 V4] .* obj.size;
 
             obj.Points = [obj.Points; ones(1, 4)];
             
@@ -46,9 +46,9 @@ classdef Square
                 0 0 0 1
             ];
 
-            obj.Points = trans(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1))*obj.Points;
+            obj = obj.translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
             obj.Points = R*obj.Points;
-            obj.Points = trans( commonPoints(1,1),  commonPoints(2,1),  commonPoints(3,1))*obj.Points;
+            obj = obj.translate( commonPoints(1,1),  commonPoints(2,1),  commonPoints(3,1));
 
             obj.h.XData = obj.Points(1,:);
             obj.h.YData = obj.Points(2,:);

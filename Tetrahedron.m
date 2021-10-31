@@ -8,37 +8,41 @@ classdef Tetrahedron
     methods
         function obj = Tetrahedron(size)
             % Construct an instance of this class
-            obj.faces = [Triangle(size, 1/2, -sqrt(3)/2, 0, pi, 0, 0), Triangle(size, 1, 0, 0, 0, 0, 0), Triangle(size, 3/2, -sqrt(3)/2, 0, pi, 0, 0) ...
-                Triangle(size, 1, 0, 0, pi, 0, 0)];
+            % all open cube vertices
+            V = [
+                0 1 2 1/2       3/2       1 
+                0 0 0 sqrt(3)/2 sqrt(3)/2 sqrt(3)
+                0 0 0 0         0         0
+            ];
+
+            obj.faces = [Triangle(size, V(:,1), V(:,2), V(:,4), 'y') Triangle(size, V(:,2), V(:,4), V(:,5), 'y') ...
+                Triangle(size, V(:,2), V(:,3), V(:,5), 'y') Triangle(size, V(:,4), V(:,5), V(:,6), 'y')];
         end
         
-        function obj = move(obj, path)
-            % move cube
-            for i=1:6
-                obj.faces(i) = obj.faces(i).move(path);
-            end
-        end
-
-        function obj = moveSlowly(obj, path)
-            % move cube
+        function obj = translate(obj, X, Y, Z)
+            % translate entire tetrahedron
             N=100;
             for n=1:N
-                obj = obj.move(path/N);
+                i = 1;
+                while i<=length(obj.faces)
+                    obj.faces(i) = obj.faces(i).translate(X/N, Y/N, Z/N);
+                    i = i+1;
+                end
                 pause(0.02)
             end
         end
 
         function obj = close(obj)
+            % close the tetrahedron
             N=100;
             
             for n=1:N
-                obj.faces(1) = obj.faces(1).move([0 0 0  0  0 -pi/6]);
-                obj.faces(1) = obj.faces(1).move([0 0 0  0 7*pi/12 0]/N);
-                obj.faces(1) = obj.faces(1).move([0 0 0  0  0 pi/6]);
-                %obj.faces(3) = obj.faces(3).move([-1 0 0  0 0 0]);
-                %obj.faces(3) = obj.faces(3).move([0 0 0  0 -pi/2 0]/N);
-                %obj.faces(3) = obj.faces(3).move([1 0 0  0 0 0]);
-                obj.faces(4) = obj.faces(4).move([0 0 0 7*pi/12 0  0]/N);
+                obj.faces(1) = obj.faces(1).rotate(obj.faces(2).Points, (-pi + acos(1/3))/N, []);
+                
+                obj.faces(3) = obj.faces(3).rotate(obj.faces(2).Points, (pi - acos(1/3))/N, []);
+
+                obj.faces(4) = obj.faces(4).rotate(obj.faces(2).Points, (-pi + acos(1/3))/N, []);
+
                 pause(0.02)
             end
         end

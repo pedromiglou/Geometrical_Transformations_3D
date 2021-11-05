@@ -8,11 +8,17 @@ classdef Square
     end
     
     methods
-        function obj = Square(size, V1, V2, V3, V4, color)
+        function obj = Square(size, color)
             % Construct an instance of this class
             obj.size = sqrt(2)*size;
 
-            obj.Points = [V1 V2 V3 V4] .* obj.size;
+            V = [
+                -1/2 -1/2 1/2 1/2
+                -1/2 1/2 1/2 -1/2
+                0 0 0 0
+                ];
+            
+            obj.Points = V .* obj.size;
 
             obj.Points = [obj.Points; ones(1, 4)];
             
@@ -35,7 +41,15 @@ classdef Square
 
         function [obj, dependentFaces] = rotate(obj, othersPoints, angle, dependentFaces)
             % Rotation movement
-            commonPoints = intersect(othersPoints', obj.Points', 'rows')';
+            commonPoints = [];
+            for i=1:4
+                for j=1:4
+                    if and(and(abs(othersPoints(1, i) - obj.Points(1, j))<0.001, abs(othersPoints(2, i) - obj.Points(2, j))<0.001), abs(othersPoints(3, i) - obj.Points(3, j))<0.001)
+                        commonPoints = [commonPoints othersPoints(:, i)];
+                        break;
+                    end
+                end
+            end
             axis = commonPoints(:,1) - commonPoints(:,2);
             axis = axis/sqrt(sum(axis.^2));
 
@@ -54,12 +68,12 @@ classdef Square
             obj.h.YData = obj.Points(2,:);
             obj.h.ZData = obj.Points(3,:);
 
-            i = 1;
-            while i<=length(dependentFaces)
-                dependentFaces(i) = dependentFaces(i).translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
-                dependentFaces(i).Points = R*dependentFaces(i).Points;
-                dependentFaces(i) = dependentFaces(i).translate(commonPoints(1,1), commonPoints(2,1), commonPoints(3,1));
-                i = i+1;
+            if ~isempty(dependentFaces)
+                for i=1:length(dependentFaces)
+                    dependentFaces(i) = dependentFaces(i).translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
+                    dependentFaces(i).Points = R*dependentFaces(i).Points;
+                    dependentFaces(i) = dependentFaces(i).translate(commonPoints(1,1), commonPoints(2,1), commonPoints(3,1));
+                end
             end
         end
     end

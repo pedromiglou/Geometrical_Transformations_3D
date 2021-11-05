@@ -8,11 +8,17 @@ classdef Triangle
     end
     
     methods
-        function obj = Triangle(size, V1, V2, V3, color)
+        function obj = Triangle(size, color)
             % Construct an instance of this class
             obj.size = sqrt(3*sqrt(3)/2)*size;
 
-            obj.Points = [V1 V2 V3] .* obj.size;
+            V = [
+                1/2       -1/2      0
+                sqrt(3)/4 sqrt(3)/4 -sqrt(3)/4
+                0         0         0
+                ];
+            
+            obj.Points = V .* obj.size;
 
             obj.Points = [obj.Points; ones(1, 3)];
             
@@ -33,23 +39,36 @@ classdef Triangle
             obj.h.ZData = obj.Points(3,:);
         end
 
+        function obj = translateWithRotation(obj, X, Y, Z, a)
+            R = [ cos(a)  -sin(a) 0  0
+                  sin(a)  cos(a)  0  0
+                  0       0       1  0
+                  0       0       0  1
+                ];
+
+            % Translation movement
+            T = [ 1 0 0 X
+                  0 1 0 Y
+                  0 0 1 Z
+                  0 0 0 1
+                ];
+            obj.Points = T*R*obj.Points;
+                
+            obj.h.XData = obj.Points(1,:);
+            obj.h.YData = obj.Points(2,:);
+            obj.h.ZData = obj.Points(3,:);
+        end
+
         function [obj, dependentFaces] = rotate(obj, othersPoints, angle, dependentFaces)
             % Rotation movement
-            %othersPoints
-            %obj.Points
-            %commonPoints = intersect(othersPoints', obj.Points', 'rows')'
             commonPoints = [];
-            i = 1;
-            while i<=3
-                j=1;
-                while j<=3
-                    if and(abs(othersPoints(1, i) - obj.Points(1, j))<0.001, abs(othersPoints(2, i) - obj.Points(2, j))<0.001)
+            for i=1:3
+                for j=1:3
+                    if and(and(abs(othersPoints(1, i) - obj.Points(1, j))<0.001, abs(othersPoints(2, i) - obj.Points(2, j))<0.001), abs(othersPoints(3, i) - obj.Points(3, j))<0.001)
                         commonPoints = [commonPoints othersPoints(:, i)];
                         break;
                     end
-                    j = j+1;
                 end
-                i = i+1;
             end
             axis = commonPoints(:,1) - commonPoints(:,2);
             axis = axis/sqrt(sum(axis.^2));
@@ -69,12 +88,12 @@ classdef Triangle
             obj.h.YData = obj.Points(2,:);
             obj.h.ZData = obj.Points(3,:);
 
-            i = 1;
-            while i<=length(dependentFaces)
-                dependentFaces(i) = dependentFaces(i).translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
-                dependentFaces(i).Points = R*dependentFaces(i).Points;
-                dependentFaces(i) = dependentFaces(i).translate(commonPoints(1,1), commonPoints(2,1), commonPoints(3,1));
-                i = i+1;
+            if ~isempty(dependentFaces)
+                for i=1:length(dependentFaces)
+                    dependentFaces(i) = dependentFaces(i).translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
+                    dependentFaces(i).Points = R*dependentFaces(i).Points;
+                    dependentFaces(i) = dependentFaces(i).translate(commonPoints(1,1), commonPoints(2,1), commonPoints(3,1));
+                end
             end
         end
     end

@@ -8,15 +8,24 @@ classdef Tetrahedron
     methods
         function obj = Tetrahedron(size)
             % Construct an instance of this class
-            % all open cube vertices
-            V = [
-                0 1 2 1/2       3/2       1 
-                0 0 0 sqrt(3)/2 sqrt(3)/2 sqrt(3)
-                0 0 0 0         0         0
-            ];
+            obj.faces = [Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y')];
 
-            obj.faces = [Triangle(size, V(:,1), V(:,2), V(:,4), 'y') Triangle(size, V(:,2), V(:,4), V(:,5), 'y') ...
-                Triangle(size, V(:,2), V(:,3), V(:,5), 'y') Triangle(size, V(:,4), V(:,5), V(:,6), 'y')];
+            size = sqrt(3*sqrt(3)/2)*size;
+            N=80;
+
+            obj.faces(1) = obj.faces(1).translateWithRotation(3*size/2/N, 5*sqrt(3)*size/4/N, 0, pi);
+            obj.faces(2) = obj.faces(2).translateWithRotation(2*size/N, 5*sqrt(3)*size/4/N, 0, 0);
+            obj.faces(3) = obj.faces(3).translateWithRotation(5*size/2/N, 5*sqrt(3)*size/4/N, 0, pi);
+            obj.faces(4) = obj.faces(4).translateWithRotation(2*size/N, 7*sqrt(3)*size/4/N, 0, pi);
+            pause(0.02)
+
+            for i=2:N
+                obj.faces(1) = obj.faces(1).translateWithRotation(3*size/2/N, 5*sqrt(3)*size/4/N, 0, 0);
+                obj.faces(2) = obj.faces(2).translateWithRotation(2*size/N, 5*sqrt(3)*size/4/N, 0, 0);
+                obj.faces(3) = obj.faces(3).translateWithRotation(5*size/2/N, 5*sqrt(3)*size/4/N, 0, 0);
+                obj.faces(4) = obj.faces(4).translateWithRotation(2*size/N, 7*sqrt(3)*size/4/N, 0, 0);
+                pause(0.02)
+            end
         end
         
         function obj = translate(obj, X, Y, Z)
@@ -32,19 +41,11 @@ classdef Tetrahedron
             end
         end
 
-        function obj = close(obj)
+        function obj = close(obj, N)
             % close the tetrahedron
-            N=100;
-            
-            for n=1:N
-                obj.faces(1) = obj.faces(1).rotate(obj.faces(2).Points, (-pi + acos(1/3))/N, []);
-                
-                obj.faces(3) = obj.faces(3).rotate(obj.faces(2).Points, (pi - acos(1/3))/N, []);
-
-                obj.faces(4) = obj.faces(4).rotate(obj.faces(2).Points, (-pi + acos(1/3))/N, []);
-
-                pause(0.02)
-            end
+            obj.faces(1) = obj.faces(1).rotate(obj.faces(2).Points, (pi - acos(1/3))/N, []);
+            obj.faces(3) = obj.faces(3).rotate(obj.faces(2).Points, (-pi + acos(1/3))/N, []);
+            obj.faces(4) = obj.faces(4).rotate(obj.faces(2).Points, (pi - acos(1/3))/N, []);
         end
     end
 end

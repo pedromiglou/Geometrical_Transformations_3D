@@ -8,9 +8,8 @@ classdef Octahedron
     methods
         function obj = Octahedron(size)
             % Construct an instance of this class
-            % all open cube vertices
-           obj.faces = [Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y') ...
-                        Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y')];
+            obj.faces = [Triangle(size, 'r') Triangle(size, 'r') Triangle(size, 'r') Triangle(size, 'r') ...
+                        Triangle(size, 'r') Triangle(size, 'r') Triangle(size, 'r') Triangle(size, 'r')];
 
             size = sqrt(3*sqrt(3)/2)*size;
             N=80;

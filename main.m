@@ -16,7 +16,7 @@ zlabel('Z')
 
 hold on
 
-s = Octahedron(R);
+s = Icosahedron(R);
 
 N=50;
 for n=1:N

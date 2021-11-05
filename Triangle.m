@@ -64,7 +64,7 @@ classdef Triangle
             commonPoints = [];
             for i=1:3
                 for j=1:3
-                    if and(and(abs(othersPoints(1, i) - obj.Points(1, j))<0.001, abs(othersPoints(2, i) - obj.Points(2, j))<0.001), abs(othersPoints(3, i) - obj.Points(3, j))<0.001)
+                    if and(and(abs(othersPoints(1, i) - obj.Points(1, j))<0.01, abs(othersPoints(2, i) - obj.Points(2, j))<0.01), abs(othersPoints(3, i) - obj.Points(3, j))<0.01)
                         commonPoints = [commonPoints othersPoints(:, i)];
                         break;
                     end

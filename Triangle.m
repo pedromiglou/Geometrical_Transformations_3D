@@ -10,7 +10,7 @@ classdef Triangle
     methods
         function obj = Triangle(size, color)
             % Construct an instance of this class
-            obj.size = sqrt(3*sqrt(3)/2)*size;
+            obj.size = sqrt(3*sqrt(3)/4)*size;
 
             V = [
                 1/2       -1/2      0

@@ -13,7 +13,7 @@ classdef Icosahedron
                         Triangle(size, 'b') Triangle(size, 'b') Triangle(size, 'b') Triangle(size, 'b') Triangle(size, 'b') ...
                         Triangle(size, 'b') Triangle(size, 'b') Triangle(size, 'b') Triangle(size, 'b') Triangle(size, 'b')];
 
-            size = sqrt(3*sqrt(3)/2)*size;
+            size = sqrt(3*sqrt(3)/4)*size;
             N=80;
 
             obj.faces(1) = obj.faces(1).translateWithRotation(3*size/2/N, 3*sqrt(3)*size/4/N, 0, 0);

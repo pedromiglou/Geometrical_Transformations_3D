@@ -11,7 +11,7 @@ classdef Octahedron
             obj.faces = [Triangle(size, 'r') Triangle(size, 'r') Triangle(size, 'r') Triangle(size, 'r') ...
                         Triangle(size, 'r') Triangle(size, 'r') Triangle(size, 'r') Triangle(size, 'r')];
 
-            size = sqrt(3*sqrt(3)/2)*size;
+            size = sqrt(3*sqrt(3)/4)*size;
             N=80;
 
             obj.faces(1) = obj.faces(1).translateWithRotation(5*size/2/N, 3*sqrt(3)*size/4/N, 0, 0);

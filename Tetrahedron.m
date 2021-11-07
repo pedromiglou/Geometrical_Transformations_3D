@@ -10,7 +10,7 @@ classdef Tetrahedron
             % Construct an instance of this class
             obj.faces = [Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y')];
 
-            size = sqrt(3*sqrt(3)/4)*size;
+            size = sqrt(3)*size;
             N=80;
 
             obj.faces(1) = obj.faces(1).translateWithRotation(3*size/2/N, 5*sqrt(3)*size/4/N, 0, pi);

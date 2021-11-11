@@ -8,7 +8,7 @@ plot3(0,0,0,'b');
 
 axis equal
 grid on
-axis([0 30 0 30 0 30]);
+axis([-10 20 -10 20 -10 20]);
 
 xlabel('X')
 ylabel('Y')
@@ -16,10 +16,18 @@ zlabel('Z')
 
 hold on
 
-s = Icosahedron(R);
+s = Octahedron(R);
 
-N=50;
+N=100;
 for n=1:N
-    s = s.close(N);
+    s = s.reset();
+
+    if n<50
+        s = s.planificate(n, 50);
+    end
+
+    if n>=50
+        s = s.close(n-50, 50);
+    end
     pause(0.02)
 end

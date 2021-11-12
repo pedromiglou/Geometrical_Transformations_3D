@@ -10,13 +10,15 @@ axis equal
 grid on
 axis([-10 20 -10 20 -10 20]);
 
+
+
 xlabel('X')
 ylabel('Y')
 zlabel('Z')
 
 hold on
 
-s = Cube(R);
+s = Icosahedron(R);
 
 N=100;
 for n=1:N

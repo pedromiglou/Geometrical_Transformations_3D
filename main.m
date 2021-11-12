@@ -24,10 +24,10 @@ for n=1:N
 
     if n<50
         s = s.planificate(n, 50);
-    end
-
-    if n>=50
+    else
         s = s.close(n-50, 50);
     end
+
+    s = s.update();
     pause(0.02)
 end

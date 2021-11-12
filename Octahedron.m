@@ -43,7 +43,6 @@ classdef Octahedron
             obj.faces(1).points = trans(0, -obj.height*n/N, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(1).points;
             obj.faces(2).points = trans(-obj.size*n/N, 0, 0) * obj.faces(2).points;
             obj.faces(3).points = trans(-obj.size/2*n/N, 0, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(3).points;
-            obj.faces(4).points = trans(0, 0, 0) * obj.faces(4).points;
             obj.faces(5).points = trans(obj.size/2*n/N, 0, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(5).points;
             obj.faces(6).points = trans(obj.size*n/N, 0, 0) * obj.faces(6).points;
             obj.faces(7).points = trans(3*obj.size/2*n/N, 0, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(7).points;

@@ -3,49 +3,61 @@ classdef Cube
     
     properties
         faces
+        size
     end
     
     methods
         function obj = Cube(size)
             % Construct an instance of this class
-            obj.faces = [Square(size, 'm') Square(size, 'm') Square(size, 'm') Square(size, 'm') Square(size, 'm') Square(size, 'm')];
+            obj.faces = [Square(size, 'm') Square(size, 'm') Square(size, 'm') ...
+                Square(size, 'm') Square(size, 'm') Square(size, 'm')];
 
-            N=80;
-            size = sqrt(2)*size;
-            for i=1:N
-                obj.faces(1) = obj.faces(1).translate(3*size/2/N, 5*size/2/N, 0);
-                obj.faces(2) = obj.faces(2).translate(5*size/2/N, 5*size/2/N, 0);
-                obj.faces(3) = obj.faces(3).translate(7*size/2/N, 5*size/2/N, 0);
-                obj.faces(4) = obj.faces(4).translate(9*size/2/N, 5*size/2/N, 0);
-                obj.faces(5) = obj.faces(5).translate(5*size/2/N, 3*size/2/N, 0);
-                obj.faces(6) = obj.faces(6).translate(5*size/2/N, 7*size/2/N, 0);
-                pause(0.02)
+            obj.size = sqrt(2)*size;
+        end
+
+        function obj = reset(obj)
+            % reset faces coordinates
+            for i=1:length(obj.faces)
+                obj.faces(i).points = obj.faces(i).initialPoints;
             end
         end
 
-        function obj = translate(obj, X, Y, Z, N)
+        function obj = update(obj)
+            % update faces graphic representation
+            for i=1:length(obj.faces)
+                obj.faces(i) = obj.faces(i).update();
+            end
+        end
+
+        function obj = translate(obj, X, Y, Z)
             % translate entire cube
-            i = 1;
-            while i<=length(obj.faces)
-                obj.faces(i) = obj.faces(i).translate(X/N, Y/N, Z/N);
-                i = i+1;
+            for i=1:length(obj.faces)
+                obj.faces(i).points = trans(X, Y, Z) * obj.faces(i).points;
             end
         end
 
-        function obj = close(obj, N)
-            % close the cube
-            obj.faces(1) = obj.faces(1).rotate(obj.faces(2).Points, -pi/2/N, []);
+        function obj = planificate(obj, n, N)
+            % planificate cube
+            obj.faces(1).points = trans(-obj.size*n/N, 0, 0) * obj.faces(1).points;
+            obj.faces(3).points = trans(obj.size*n/N, 0, 0) * obj.faces(3).points;
+            obj.faces(4).points = trans(2*obj.size*n/N, 0, 0) * obj.faces(4).points;
+            obj.faces(5).points = trans(0, -obj.size*n/N, 0) * obj.faces(5).points;
+            obj.faces(6).points = trans(0, obj.size*n/N, 0) * obj.faces(6).points;
+        end
+
+        function obj = close(obj, n, N)
+            % close the cube with face 2 not moving
+            obj.faces(1) = obj.faces(1).attach(pi/2*n/N, pi/2, [obj.faces(2).points(1:4,1) obj.faces(2).points(1:4,4)]);
+
+            obj.faces(4) = obj.faces(4).attach(pi/2*n/N, 0, obj.faces(3).points(1:4,3:4));
             
             dependentFaces = [obj.faces(4)];
-            [obj.faces(3), dependentFaces] = obj.faces(3).rotate(obj.faces(2).Points, -pi/2/N, dependentFaces);
+            [obj.faces(3), dependentFaces] = obj.faces(3).attach(pi/2*n/N, 3*pi/2, obj.faces(2).points(1:4,2:3), dependentFaces);
             obj.faces(4) = dependentFaces(1);
 
-            obj.faces(4) = obj.faces(4).rotate(obj.faces(3).Points, -pi/2/N, []);
+            obj.faces(5) = obj.faces(5).attach(pi/2*n/N, pi, obj.faces(2).points(1:4,1:2));
 
-            obj.faces(5) = obj.faces(5).rotate(obj.faces(2).Points, pi/2/N, []);
-            obj.faces(6) = obj.faces(6).rotate(obj.faces(2).Points, -pi/2/N, []);
-            pause(0.02)
+            obj.faces(6) = obj.faces(6).attach(pi/2*n/N, 0, obj.faces(2).points(1:4,3:4));
         end
     end
 end
-

@@ -16,7 +16,7 @@ zlabel('Z')
 
 hold on
 
-s = Tetrahedron(R);
+s = Cube(R);
 
 N=100;
 for n=1:N

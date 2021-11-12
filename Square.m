@@ -2,80 +2,57 @@ classdef Square
     % Class to represent the Square figure
     
     properties
-        Points
+        initialPoints
+        points
         h
         size
     end
     
     methods
         function obj = Square(size, color)
-            % Construct an instance of this class
+            % Construct an instance of a Square
             obj.size = sqrt(2)*size;
 
-            V = [
-                -1/2 -1/2 1/2 1/2
-                -1/2 1/2 1/2 -1/2
-                0 0 0 0
+            obj.initialPoints = [
+                0   obj.size    obj.size    0
+                0   0           obj.size    obj.size
+                0   0           0           0
+                1   1           1           1
                 ];
-            
-            obj.Points = V .* obj.size;
 
-            obj.Points = [obj.Points; ones(1, 4)];
-            
-            obj.h = fill3( obj.Points(1, :), obj.Points(2,:), obj.Points(3,:), color);
+            obj.points = obj.initialPoints;
+
+            obj.h = fill3(obj.points(1, :), obj.points(2,:), obj.points(3,:), color);
         end
         
-        function obj = translate(obj, X, Y, Z)
-            % Translation movement
-            T = [ 1 0 0 X
-                  0 1 0 Y
-                  0 0 1 Z
-                  0 0 0 1
-                ];
-            obj.Points = T*obj.Points;
-                
-            obj.h.XData = obj.Points(1,:);
-            obj.h.YData = obj.Points(2,:);
-            obj.h.ZData = obj.Points(3,:);
+        function [obj, dependentFaces] = attach(obj, xAngle, zAngle, newCoords, dependentFaces)
+            % rotate figure around its edge that connects to other figure,
+            % initially the X-axis
+            obj.points = rotx(xAngle) * obj.points;
+
+            % rotate around itself
+            middle = mean(obj.points, 2);
+            obj.points = rotz(zAngle) * trans(-middle(1), -middle(2), 0) * obj.points;
+
+            % translation movement to specific coordenates
+            translation = mean(newCoords, 2) - mean(obj.points(:,1:2), 2);
+            obj.points = trans(translation(1), translation(2), translation(3)) * obj.points;
+
+            % repeat above operations for dependent faces
+            if nargin>4
+                for i=1:length(dependentFaces)
+                    dependentFaces(i).points = rotx(xAngle) * dependentFaces(i).points;
+                    dependentFaces(i).points = rotz(zAngle) * trans(-middle(1), -middle(2), 0) * dependentFaces(i).points;
+                    dependentFaces(i).points = trans(translation(1), translation(2), translation(3)) * dependentFaces(i).points;
+                end
+            end
         end
 
-        function [obj, dependentFaces] = rotate(obj, othersPoints, angle, dependentFaces)
-            % Rotation movement
-            commonPoints = [];
-            for i=1:4
-                for j=1:4
-                    if and(and(abs(othersPoints(1, i) - obj.Points(1, j))<0.001, abs(othersPoints(2, i) - obj.Points(2, j))<0.001), abs(othersPoints(3, i) - obj.Points(3, j))<0.001)
-                        commonPoints = [commonPoints othersPoints(:, i)];
-                        break;
-                    end
-                end
-            end
-            axis = commonPoints(:,1) - commonPoints(:,2);
-            axis = axis/sqrt(sum(axis.^2));
-
-            R = [
-                cos(angle) + axis(1).^2*(1-cos(angle))    axis(1)*axis(2)*(1-cos(angle)) - axis(3) * sin(angle)    axis(1)*axis(3)*(1-cos(angle))+axis(2)*sin(angle) 0
-                axis(2)*axis(1)*(1-cos(angle))+axis(3)*sin(angle)    cos(angle)+axis(2).^2*(1-cos(angle))    axis(2)*axis(3)*(1-cos(angle))-axis(1)*sin(angle) 0
-                axis(3)*axis(1)*(1-cos(angle))-axis(2)*sin(angle)    axis(3)*axis(2)*(1-cos(angle))+axis(1)*sin(angle)    cos(angle) + axis(3).^2*(1-cos(angle)) 0
-                0 0 0 1
-            ];
-
-            obj = obj.translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
-            obj.Points = R*obj.Points;
-            obj = obj.translate( commonPoints(1,1),  commonPoints(2,1),  commonPoints(3,1));
-
-            obj.h.XData = obj.Points(1,:);
-            obj.h.YData = obj.Points(2,:);
-            obj.h.ZData = obj.Points(3,:);
-
-            if ~isempty(dependentFaces)
-                for i=1:length(dependentFaces)
-                    dependentFaces(i) = dependentFaces(i).translate(- commonPoints(1,1), - commonPoints(2,1), - commonPoints(3,1));
-                    dependentFaces(i).Points = R*dependentFaces(i).Points;
-                    dependentFaces(i) = dependentFaces(i).translate(commonPoints(1,1), commonPoints(2,1), commonPoints(3,1));
-                end
-            end
+        function obj = update(obj)
+            % update square graphic representation
+            obj.h.XData = obj.points(1,:);
+            obj.h.YData = obj.points(2,:);
+            obj.h.ZData = obj.points(3,:);
         end
     end
 end
-

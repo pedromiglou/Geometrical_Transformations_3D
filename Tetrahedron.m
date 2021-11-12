@@ -9,7 +9,7 @@ classdef Tetrahedron
     
     methods
         function obj = Tetrahedron(size)
-            % Construct an instance of an Tetrahedron
+            % Construct an instance of a Tetrahedron
             obj.faces = [Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y') Triangle(size, 'y')];
 
             obj.size = sqrt(3)*size;
@@ -54,4 +54,3 @@ classdef Tetrahedron
         end
     end
 end
-

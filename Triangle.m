@@ -11,7 +11,7 @@ classdef Triangle
     
     methods
         function obj = Triangle(size, color)
-            % Construct an instance of this class
+            % Construct an instance of a Triangle
             obj.size = sqrt(3)*size;
             obj.height = 3/2*size;
 
@@ -51,10 +51,10 @@ classdef Triangle
         end
 
         function obj = update(obj)
+            % update triangle graphic representation
             obj.h.XData = obj.points(1,:);
             obj.h.YData = obj.points(2,:);
             obj.h.ZData = obj.points(3,:);
         end
     end
 end
-

@@ -8,7 +8,7 @@ plot3(0,0,0,'b');
 
 axis equal
 grid on
-axis([-10 20 -10 20 -10 20]);
+axis([-10 30 -10 30 -10 30]);
 
 
 
@@ -18,7 +18,7 @@ zlabel('Z')
 
 hold on
 
-s = Icosahedron(R);
+s = Dodecahedron(R);
 
 N=100;
 for n=1:N
@@ -27,7 +27,8 @@ for n=1:N
     if n<50
         s = s.planificate(n, 50);
     else
-        s = s.close(n-50, 50);
+        s = s.planificate(50, 50);
+        %s = s.close(n-50, 50);
     end
 
     s = s.update();

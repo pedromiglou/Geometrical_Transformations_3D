@@ -45,17 +45,21 @@ classdef Dodecahedron
             % planificate dodecahedron
             aux = sqrt(3/4*obj.size^2 + obj.size*obj.width/2 - obj.width^2/4);
 
+            middlePoint = [obj.size/2, (obj.height+2*aux)/5];
+            invertedMiddlePoint = [obj.size/2, (4*obj.height-2*aux)/5];
+            invertingMatrix = trans(invertedMiddlePoint(1)*n/N, invertedMiddlePoint(2)*n/N, 0) * rotz(pi*n/N) * trans(-middlePoint(1)*n/N, -middlePoint(2)*n/N, 0);
+
             obj.faces(1).points = trans(-obj.width/2*n/N, -(obj.height+aux)*n/N, 0) * obj.faces(1).points;
             obj.faces(2).points = trans(obj.width/2*n/N, -(obj.height+aux)*n/N, 0) * obj.faces(2).points;
-            obj.faces(3).points = trans(0, -obj.height*n/N, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(3).points;
+            obj.faces(3).points = trans(0, -obj.height*n/N, 0) * invertingMatrix * obj.faces(3).points;
             obj.faces(4).points = trans(-(obj.size+obj.width)/2*n/N, -aux*n/N, 0) * obj.faces(4).points;
             obj.faces(5).points = trans((obj.size+obj.width)/2*n/N, -aux*n/N, 0) * obj.faces(5).points;
-            obj.faces(7).points = trans(obj.width/2*n/N, aux*n/N, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(7).points;
-            obj.faces(8).points = trans(-obj.size/2*n/N, 2*aux*n/N, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(8).points;
-            obj.faces(9).points = trans((obj.size/2+obj.width)*n/N, 2*aux*n/N, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(9).points;
+            obj.faces(7).points = trans(obj.width/2*n/N, aux*n/N, 0) * invertingMatrix * obj.faces(7).points;
+            obj.faces(8).points = trans(-obj.size/2*n/N, 2*aux*n/N, 0) * invertingMatrix * obj.faces(8).points;
+            obj.faces(9).points = trans((obj.size/2+obj.width)*n/N, 2*aux*n/N, 0) * invertingMatrix * obj.faces(9).points;
             obj.faces(10).points = trans(obj.width/2*n/N, (aux+obj.height)*n/N, 0) * obj.faces(10).points;
-            obj.faces(11).points = trans(0, (2*aux+obj.height)*n/N, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(11).points;
-            obj.faces(12).points = trans(obj.width*n/N, (2*aux+obj.height)*n/N, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(12).points;
+            obj.faces(11).points = trans(0, (2*aux+obj.height)*n/N, 0) * invertingMatrix * obj.faces(11).points;
+            obj.faces(12).points = trans(obj.width*n/N, (2*aux+obj.height)*n/N, 0) * invertingMatrix * obj.faces(12).points;
         end
 
         function obj = close(obj, n, N)

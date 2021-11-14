@@ -1,6 +1,6 @@
 addpath ./Geometrical_Transformations_3D
 
-R = 4;
+R = 3;
 
 close
 

@@ -40,12 +40,16 @@ classdef Octahedron
 
         function obj = planificate(obj, n, N)
             % planificate octahedron
-            obj.faces(1).points = trans(0, -obj.height*n/N, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(1).points;
+            middlePoint = [obj.size/2, obj.height/3];
+            invertedMiddlePoint = [obj.size/2, 2*obj.height/3];
+            invertingMatrix = trans(invertedMiddlePoint(1)*n/N, invertedMiddlePoint(2)*n/N, 0) * rotz(pi*n/N) * trans(-middlePoint(1)*n/N, -middlePoint(2)*n/N, 0);
+
+            obj.faces(1).points = trans(0, -obj.height*n/N, 0) * invertingMatrix * obj.faces(1).points;
             obj.faces(2).points = trans(-obj.size*n/N, 0, 0) * obj.faces(2).points;
-            obj.faces(3).points = trans(-obj.size/2*n/N, 0, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(3).points;
-            obj.faces(5).points = trans(obj.size/2*n/N, 0, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(5).points;
+            obj.faces(3).points = trans(-obj.size/2*n/N, 0, 0) * invertingMatrix * obj.faces(3).points;
+            obj.faces(5).points = trans(obj.size/2*n/N, 0, 0) * invertingMatrix * obj.faces(5).points;
             obj.faces(6).points = trans(obj.size*n/N, 0, 0) * obj.faces(6).points;
-            obj.faces(7).points = trans(3*obj.size/2*n/N, 0, 0) * trans(0, obj.height, 0) * rotx(pi) * obj.faces(7).points;
+            obj.faces(7).points = trans(3*obj.size/2*n/N, 0, 0) * invertingMatrix * obj.faces(7).points;
             obj.faces(8).points = trans(obj.size/2*n/N, obj.height*n/N, 0) * obj.faces(8).points;
         end
 

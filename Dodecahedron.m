@@ -34,10 +34,10 @@ classdef Dodecahedron
             end
         end
         
-        function obj = translate(obj, X, Y, Z)
+        function obj = translate(obj, X, Y, Z, n, N)
             % translate entire dodecahedron
             for i=1:length(obj.faces)
-                obj.faces(i).points = trans(X, Y, Z) * obj.faces(i).points;
+                obj.faces(i).points = trans(X*n/N, Y*n/N, Z*n/N) * obj.faces(i).points;
             end
         end
 
@@ -47,7 +47,7 @@ classdef Dodecahedron
 
             middlePoint = [obj.size/2, (obj.height+2*aux)/5];
             invertedMiddlePoint = [obj.size/2, (4*obj.height-2*aux)/5];
-            invertingMatrix = trans(invertedMiddlePoint(1)*n/N, invertedMiddlePoint(2)*n/N, 0) * rotz(pi*n/N) * trans(-middlePoint(1)*n/N, -middlePoint(2)*n/N, 0);
+            invertingMatrix = trans(invertedMiddlePoint(1), invertedMiddlePoint(2), 0) * rotz(pi*n/N) * trans(-middlePoint(1), -middlePoint(2), 0);
 
             obj.faces(1).points = trans(-obj.width/2*n/N, -(obj.height+aux)*n/N, 0) * obj.faces(1).points;
             obj.faces(2).points = trans(obj.width/2*n/N, -(obj.height+aux)*n/N, 0) * obj.faces(2).points;
@@ -64,43 +64,57 @@ classdef Dodecahedron
 
         function obj = close(obj, n, N)
             % close the dodecahedron with face 6 not moving
-            obj.faces(1) = obj.faces(1).attach((pi - acos(-1/sqrt(5)))*n/N, -pi/5, obj.faces(3).points(1:4,3:4));
+            xAngle = (pi - acos(-1/sqrt(5)))*n/N;
+            obj.faces(1) = obj.faces(1).attach(xAngle, -pi/5, obj.faces(3).points(1:4,3:4));
 
-            obj.faces(2) = obj.faces(2).attach((pi - acos(-1/sqrt(5)))*n/N, pi/5, obj.faces(3).points(1:4,4:5));
+            obj.faces(2) = obj.faces(2).attach(xAngle, pi/5, obj.faces(3).points(1:4,4:5));
 
-            obj.faces(4) = obj.faces(4).attach((pi - acos(-1/sqrt(5)))*n/N, -3*pi/5, obj.faces(3).points(1:4,2:3));
+            obj.faces(4) = obj.faces(4).attach(xAngle, -3*pi/5, obj.faces(3).points(1:4,2:3));
 
-            obj.faces(5) = obj.faces(5).attach((pi - acos(-1/sqrt(5)))*n/N, 3*pi/5, [obj.faces(3).points(1:4,1) obj.faces(3).points(1:4,5)]);
+            obj.faces(5) = obj.faces(5).attach(xAngle, 3*pi/5, [obj.faces(3).points(1:4,1) obj.faces(3).points(1:4,5)]);
 
             dependentFaces = [obj.faces(1) obj.faces(2) obj.faces(4) obj.faces(5)];
-            [obj.faces(3), dependentFaces] = obj.faces(3).attach((pi - acos(-1/sqrt(5)))*n/N, pi, obj.faces(6).points(1:4,1:2), dependentFaces);
+            [obj.faces(3), dependentFaces] = obj.faces(3).attach(xAngle, pi, obj.faces(6).points(1:4,1:2), dependentFaces);
             obj.faces(1) = dependentFaces(1);
             obj.faces(2) = dependentFaces(2);
             obj.faces(4) = dependentFaces(3);
             obj.faces(5) = dependentFaces(4);
 
-            obj.faces(9) = obj.faces(9).attach((pi - acos(-1/sqrt(5)))*n/N, -3*pi/5, obj.faces(10).points(1:4,2:3));
+            obj.faces(9) = obj.faces(9).attach(xAngle, -3*pi/5, obj.faces(10).points(1:4,2:3));
 
-            obj.faces(12) = obj.faces(12).attach((pi - acos(-1/sqrt(5)))*n/N, -pi/5, obj.faces(10).points(1:4,3:4));
+            obj.faces(12) = obj.faces(12).attach(xAngle, -pi/5, obj.faces(10).points(1:4,3:4));
 
-            obj.faces(11) = obj.faces(11).attach((pi - acos(-1/sqrt(5)))*n/N, pi/5, obj.faces(10).points(1:4,4:5));
+            obj.faces(11) = obj.faces(11).attach(xAngle, pi/5, obj.faces(10).points(1:4,4:5));
 
-            obj.faces(8) = obj.faces(8).attach((pi - acos(-1/sqrt(5)))*n/N, 3*pi/5, [obj.faces(10).points(1:4,1) obj.faces(10).points(1:4,5)]);
+            obj.faces(8) = obj.faces(8).attach(xAngle, 3*pi/5, [obj.faces(10).points(1:4,1) obj.faces(10).points(1:4,5)]);
 
             dependentFaces = [obj.faces(8) obj.faces(9) obj.faces(11) obj.faces(12)];
-            [obj.faces(10), dependentFaces] = obj.faces(10).attach((pi - acos(-1/sqrt(5)))*n/N, pi/5, obj.faces(7).points(1:4,4:5), dependentFaces);
+            [obj.faces(10), dependentFaces] = obj.faces(10).attach(xAngle, pi/5, obj.faces(7).points(1:4,4:5), dependentFaces);
             obj.faces(8) = dependentFaces(1);
             obj.faces(9) = dependentFaces(2);
             obj.faces(11) = dependentFaces(3);
             obj.faces(12) = dependentFaces(4);
 
             dependentFaces = [obj.faces(8) obj.faces(9) obj.faces(10) obj.faces(11) obj.faces(12)];
-            [obj.faces(7), dependentFaces] = obj.faces(7).attach((pi - acos(-1/sqrt(5)))*n/N, -pi/5, obj.faces(6).points(1:4,3:4), dependentFaces);
+            [obj.faces(7), dependentFaces] = obj.faces(7).attach(xAngle, -pi/5, obj.faces(6).points(1:4,3:4), dependentFaces);
             obj.faces(8) = dependentFaces(1);
             obj.faces(9) = dependentFaces(2);
             obj.faces(10) = dependentFaces(3);
             obj.faces(11) = dependentFaces(4);
             obj.faces(12) = dependentFaces(5);
+        end
+
+        function obj = rotateAroundItself(obj, n, N)
+            middlePoints = zeros(4, length(obj.faces));
+            for i=1:length(obj.faces)
+                middlePoints(:,i) = mean(obj.faces(i).points, 2);
+            end
+
+            middle = mean(middlePoints, 2);
+
+            for i=1:length(obj.faces)
+                obj.faces(i).points = trans(middle(1), middle(2), 0) * rotz(2*pi*n/N) * trans(-middle(1), -middle(2), 0) * obj.faces(i).points;
+            end
         end
     end
 end

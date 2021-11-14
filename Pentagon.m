@@ -5,25 +5,22 @@ classdef Pentagon
         initialPoints
         points
         h
-        size
-        height
-        width
     end
     
     methods
         function obj = Pentagon(size, color)
             % Construct an instance of a Pentagon
-            obj.size = 2*sin(pi/5)*size;
-            obj.height = (1+cos(pi/5))*size;
-            obj.width = 2 * sin(2*pi/5)*size;
+            height = (1+cos(pi/5))*size;
+            width = 2 * sin(2*pi/5)*size;
+            size = 2*sin(pi/5)*size;
 
-            aux = sqrt(3/4*obj.size^2 + obj.size*obj.width/2 - obj.width^2/4);
+            aux = sqrt(3/4*size^2 + size*width/2 - width^2/4);
 
             obj.initialPoints = [
-                0   obj.size    obj.size/2+obj.width/2  obj.size/2  obj.size/2-obj.width/2
-                0   0           aux                     obj.height  aux
-                0   0           0                       0           0
-                1   1           1                       1           1
+                0   size    size/2+width/2  size/2  size/2-width/2
+                0   0       aux             height  aux
+                0   0       0               0       0
+                1   1       1               1       1
                 ];
             
             obj.points = obj.initialPoints;

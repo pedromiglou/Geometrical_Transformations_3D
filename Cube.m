@@ -29,10 +29,10 @@ classdef Cube
             end
         end
 
-        function obj = translate(obj, X, Y, Z)
+        function obj = translate(obj, X, Y, Z, n, N)
             % translate entire cube
             for i=1:length(obj.faces)
-                obj.faces(i).points = trans(X, Y, Z) * obj.faces(i).points;
+                obj.faces(i).points = trans(X*n/N, Y*n/N, Z*n/N) * obj.faces(i).points;
             end
         end
 
@@ -47,17 +47,32 @@ classdef Cube
 
         function obj = close(obj, n, N)
             % close the cube with face 2 not moving
-            obj.faces(1) = obj.faces(1).attach(pi/2*n/N, pi/2, [obj.faces(2).points(1:4,1) obj.faces(2).points(1:4,4)]);
+            xAngle = pi/2*n/N;
 
-            obj.faces(4) = obj.faces(4).attach(pi/2*n/N, 0, obj.faces(3).points(1:4,3:4));
+            obj.faces(1) = obj.faces(1).attach(xAngle, pi/2, [obj.faces(2).points(1:4,1) obj.faces(2).points(1:4,4)]);
+
+            obj.faces(4) = obj.faces(4).attach(xAngle, 0, obj.faces(3).points(1:4,3:4));
             
             dependentFaces = [obj.faces(4)];
-            [obj.faces(3), dependentFaces] = obj.faces(3).attach(pi/2*n/N, 3*pi/2, obj.faces(2).points(1:4,2:3), dependentFaces);
+            [obj.faces(3), dependentFaces] = obj.faces(3).attach(xAngle, 3*pi/2, obj.faces(2).points(1:4,2:3), dependentFaces);
             obj.faces(4) = dependentFaces(1);
 
-            obj.faces(5) = obj.faces(5).attach(pi/2*n/N, pi, obj.faces(2).points(1:4,1:2));
+            obj.faces(5) = obj.faces(5).attach(xAngle, pi, obj.faces(2).points(1:4,1:2));
 
-            obj.faces(6) = obj.faces(6).attach(pi/2*n/N, 0, obj.faces(2).points(1:4,3:4));
+            obj.faces(6) = obj.faces(6).attach(xAngle, 0, obj.faces(2).points(1:4,3:4));
+        end
+
+        function obj = rotateAroundItself(obj, n, N)
+            middlePoints = zeros(4, length(obj.faces));
+            for i=1:length(obj.faces)
+                middlePoints(:,i) = mean(obj.faces(i).points, 2);
+            end
+
+            middle = mean(middlePoints, 2);
+
+            for i=1:length(obj.faces)
+                obj.faces(i).points = trans(middle(1), middle(2), 0) * rotz(2*pi*n/N) * trans(-middle(1), -middle(2), 0) * obj.faces(i).points;
+            end
         end
     end
 end

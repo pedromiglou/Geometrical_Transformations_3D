@@ -5,19 +5,18 @@ classdef Square
         initialPoints
         points
         h
-        size
     end
     
     methods
         function obj = Square(size, color)
             % Construct an instance of a Square
-            obj.size = sqrt(2)*size;
+            size = sqrt(2)*size;
 
             obj.initialPoints = [
-                0   obj.size    obj.size    0
-                0   0           obj.size    obj.size
-                0   0           0           0
-                1   1           1           1
+                0   size    size    0
+                0   0       size    size
+                0   0       0       0
+                1   1       1       1
                 ];
 
             obj.points = obj.initialPoints;

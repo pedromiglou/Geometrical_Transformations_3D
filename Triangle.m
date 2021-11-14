@@ -5,21 +5,19 @@ classdef Triangle
         initialPoints
         points
         h
-        size
-        height
     end
     
     methods
         function obj = Triangle(size, color)
             % Construct an instance of a Triangle
-            obj.size = sqrt(3)*size;
-            obj.height = 3/2*size;
+            height = 3/2*size;
+            size = sqrt(3)*size;
 
             obj.initialPoints = [
-                0   obj.size    obj.size/2
-                0   0           obj.height
-                0   0           0
-                1   1           1
+                0   size    size/2
+                0   0       height
+                0   0       0
+                1   1       1
                 ];
             
             obj.points = obj.initialPoints;

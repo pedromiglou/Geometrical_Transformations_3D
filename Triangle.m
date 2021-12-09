@@ -8,10 +8,10 @@ classdef Triangle
     end
     
     methods
-        function obj = Triangle(size, color)
+        function obj = Triangle(R, color)
             % Construct an instance of a Triangle
-            height = 3/2*size;
-            size = sqrt(3)*size;
+            height = 3/2*R;
+            size = sqrt(3)*R;
 
             obj.initialPoints = [
                 0   size    size/2
@@ -30,9 +30,8 @@ classdef Triangle
             % initially the X-axis
             obj.points = rotx(xAngle) * obj.points;
 
-            % rotate around itself
-            middle = mean(obj.points, 2);
-            obj.points = rotz(zAngle) * trans(-middle(1), -middle(2), 0) * obj.points;
+            % rotate around the Z-axis
+            obj.points = rotz(zAngle) * obj.points;
 
             % translation movement to specific coordenates
             translation = mean(newCoords, 2) - mean(obj.points(:,1:2), 2);
@@ -42,7 +41,7 @@ classdef Triangle
             if nargin>4
                 for i=1:length(dependentFaces)
                     dependentFaces(i).points = rotx(xAngle) * dependentFaces(i).points;
-                    dependentFaces(i).points = rotz(zAngle) * trans(-middle(1), -middle(2), 0) * dependentFaces(i).points;
+                    dependentFaces(i).points = rotz(zAngle) * dependentFaces(i).points;
                     dependentFaces(i).points = trans(translation(1), translation(2), translation(3)) * dependentFaces(i).points;
                 end
             end

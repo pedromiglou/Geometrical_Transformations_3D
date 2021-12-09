@@ -8,11 +8,11 @@ classdef Pentagon
     end
     
     methods
-        function obj = Pentagon(size, color)
+        function obj = Pentagon(R, color)
             % Construct an instance of a Pentagon
-            height = (1+cos(pi/5))*size;
-            width = 2 * sin(2*pi/5)*size;
-            size = 2*sin(pi/5)*size;
+            height = (1+cos(pi/5))*R;
+            width = 2 * sin(2*pi/5)*R;
+            size = 2*sin(pi/5)*R;
 
             aux = sqrt(3/4*size^2 + size*width/2 - width^2/4);
 
@@ -33,9 +33,8 @@ classdef Pentagon
             % initially the X-axis
             obj.points = rotx(xAngle) * obj.points;
 
-            % rotate around itself
-            middle = mean(obj.points, 2);
-            obj.points = rotz(zAngle) * trans(-middle(1), -middle(2), 0) * obj.points;
+            % rotate around the Z-axis
+            obj.points = rotz(zAngle) * obj.points;
 
             % translation movement to specific coordenates
             translation = mean(newCoords, 2) - mean(obj.points(:,1:2), 2);
@@ -45,7 +44,7 @@ classdef Pentagon
             if nargin>4
                 for i=1:length(dependentFaces)
                     dependentFaces(i).points = rotx(xAngle) * dependentFaces(i).points;
-                    dependentFaces(i).points = rotz(zAngle) * trans(-middle(1), -middle(2), 0) * dependentFaces(i).points;
+                    dependentFaces(i).points = rotz(zAngle) * dependentFaces(i).points;
                     dependentFaces(i).points = trans(translation(1), translation(2), translation(3)) * dependentFaces(i).points;
                 end
             end
